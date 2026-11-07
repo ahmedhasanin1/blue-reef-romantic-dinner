@@ -1,4 +1,4 @@
-const CACHE_NAME = 'blue-reef-romantic-dinner-v1';
+const CACHE_NAME = 'blue-reef-romantic-dinner-v2';
 const ASSETS = [
   './', './index.html', './manifest.webmanifest', './blue-reef-logo.png',
   './icon-192.png', './icon-512.png', './apple-touch-icon.png', './favicon-32.png',
