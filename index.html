@@ -25,6 +25,28 @@ const words={
 };
 const menus=[{name:'sea',price:'€30',unit:'perPerson',tag:'SEAFOOD',items:[['starter','shrimpCocktail'],['main','seaMain'],['dessert','iceFruit']]},{name:'mix',price:'€25',unit:'perPerson',tag:'MIX GRILL',items:[['starter','mixStarter'],['main','mixMain'],['', 'side'],['dessert','iceFruit']]},{name:'exclusive',price:'€50',unit:'perCouple',tag:'EXCLUSIVE',items:[['starter','twoCocktails'],['main','oneKilo'],['','twoSides'],['dessert','twoDesserts']]}];
 let lang='en';const $=s=>document.querySelector(s);function render(){const w=words[lang];document.documentElement.lang=lang;document.querySelectorAll('[data-i]').forEach(el=>{const k=el.dataset.i;if(w[k])el.textContent=w[k]});$('#menus').innerHTML=menus.map(m=>`<article class="card"><div class="card-head"><span class="tag">${m.tag}</span><h3>${w[m.name]}</h3><div class="price">${m.price} <small>${w[m.unit]}</small></div></div><div class="card-body">${m.items.map(([head,body])=>`<div class="course">${head?`<h4>${w[head]}</h4>`:''}<p>${w[body]}</p></div>`).join('')}</div></article>`).join('')};$('#language').addEventListener('change',e=>{lang=e.target.value;render()});render();
-let deferredPrompt=null;const installBtn=$('#installBtn');window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;installBtn.hidden=false});installBtn.addEventListener('click',async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBtn.hidden=true}else if(/iPhone|iPad|iPod/.test(navigator.userAgent)){$('#iosModal').classList.add('open')}else{$('#iosModal').classList.add('open')}});$('#closeModal').addEventListener('click',()=>$('#iosModal').classList.remove('open'));$('#iosModal').addEventListener('click',e=>{if(e.target.id==='iosModal')e.currentTarget.classList.remove('open')});if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
-if(/iPhone|iPad|iPod/.test(navigator.userAgent)&&!window.matchMedia('(display-mode: standalone)').matches){installBtn.hidden=false;installBtn.textContent='Add to Home Screen';installBtn.addEventListener('click',()=>$('#iosModal').classList.add('open'))}
+// BLUE REEF INSTALL & VISIT COUNTER
+// Paste the deployed Google Apps Script Web App URL below.
+const BLUE_REEF_TRACKER_URL = 'https://script.google.com/macros/s/AKfycbxRHLdyzBLndSal_cF7Z3ZI5RfE3m8M_CihA-AvSD1TXiEHIbrrDzHTzNt50G4rHh1t-g/exec';
+function blueReefTrack(eventName) {
+  if (!BLUE_REEF_TRACKER_URL || BLUE_REEF_TRACKER_URL.includes('PASTE_GOOGLE')) return;
+  try {
+    const callbackName='brTrack_'+Date.now()+'_'+Math.floor(Math.random()*100000);
+    const script=document.createElement('script');
+    const params=new URLSearchParams({action:'track',event:eventName,
+      platform:/iPhone|iPad|iPod/.test(navigator.userAgent)?'iOS':(/Android/i.test(navigator.userAgent)?'Android':'Other'),
+      language:document.documentElement.lang||'en',callback:callbackName});
+    window[callbackName]=function(){try{delete window[callbackName];script.remove()}catch(e){}};
+    script.src=BLUE_REEF_TRACKER_URL+(BLUE_REEF_TRACKER_URL.includes('?')?'&':'?')+params.toString();
+    script.onerror=function(){try{delete window[callbackName];script.remove()}catch(e){}};
+    document.body.appendChild(script);
+  } catch(e) {}
+}
+try { if(!sessionStorage.getItem('blueReefVisitTracked')) {blueReefTrack('website_visit');sessionStorage.setItem('blueReefVisitTracked','1');} }
+catch(e) { blueReefTrack('website_visit'); }
+let deferredPrompt=null;const installBtn=$('#installBtn');window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;installBtn.hidden=false});
+window.addEventListener('appinstalled',()=>{blueReefTrack('android_install_confirmed');deferredPrompt=null;installBtn.hidden=true});
+installBtn.addEventListener('click',async()=>{if(deferredPrompt){deferredPrompt.prompt();const choice=await deferredPrompt.userChoice;if(choice&&choice.outcome==='accepted')blueReefTrack('android_install_accepted');deferredPrompt=null;installBtn.hidden=true;}else if(/iPhone|iPad|iPod/.test(navigator.userAgent)){blueReefTrack('ios_install_instructions_opened');$('#iosModal').classList.add('open');}else{$('#iosModal').classList.add('open');}});
+$('#closeModal').addEventListener('click',()=>$('#iosModal').classList.remove('open'));$('#iosModal').addEventListener('click',e=>{if(e.target.id==='iosModal')e.currentTarget.classList.remove('open')});if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
+if(/iPhone|iPad|iPod/.test(navigator.userAgent)&&!window.matchMedia('(display-mode: standalone)').matches){installBtn.hidden=false;installBtn.textContent='Add to Home Screen'}
 </script></body></html>
