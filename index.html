@@ -27,7 +27,7 @@ const menus=[{name:'sea',price:'€30',unit:'perPerson',tag:'SEAFOOD',items:[['s
 let lang='en';const $=s=>document.querySelector(s);function render(){const w=words[lang];document.documentElement.lang=lang;document.querySelectorAll('[data-i]').forEach(el=>{const k=el.dataset.i;if(w[k])el.textContent=w[k]});$('#menus').innerHTML=menus.map(m=>`<article class="card"><div class="card-head"><span class="tag">${m.tag}</span><h3>${w[m.name]}</h3><div class="price">${m.price} <small>${w[m.unit]}</small></div></div><div class="card-body">${m.items.map(([head,body])=>`<div class="course">${head?`<h4>${w[head]}</h4>`:''}<p>${w[body]}</p></div>`).join('')}</div></article>`).join('')};$('#language').addEventListener('change',e=>{lang=e.target.value;render()});render();
 // BLUE REEF INSTALL & VISIT COUNTER
 // Paste the deployed Google Apps Script Web App URL below.
-const BLUE_REEF_TRACKER_URL = 'https://script.google.com/macros/s/AKfycbxRHLdyzBLndSal_cF7Z3ZI5RfE3m8M_CihA-AvSD1TXiEHIbrrDzHTzNt50G4rHh1t-g/exec';
+const BLUE_REEF_TRACKER_URL = 'https://script.google.com/macros/s/AKfycbyfuxo1zxWMxqI6qrRxIml4wjJLijzRlgSGIEMFe6C62ZKaJXisf5nUvp0gvSL5p5Ma7A/exec';
 function blueReefTrack(eventName) {
   if (!BLUE_REEF_TRACKER_URL || BLUE_REEF_TRACKER_URL.includes('PASTE_GOOGLE')) return;
   try {
